@@ -3,6 +3,8 @@ import router from "./routes/api";
 
 const app = express();
 
+app.use(express.json());
+
 const PORT = 3000;
 
 app.use("/api", router);
