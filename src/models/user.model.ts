@@ -10,11 +10,12 @@ export interface User {
   profilePicture: string;
   isActive: boolean;
   activationCode: string;
+  createdAt?: string;
 }
 
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema<User>(
+const UserSchema = new Schema<User>(
   {
     fullName: {
       type: Schema.Types.String,
@@ -55,12 +56,18 @@ const userSchema = new Schema<User>(
   }
 );
 
-userSchema.pre("save", function (next) {
+UserSchema.pre("save", function (next) {
   const user = this;
   user.password = encrypt(user.password);
   next();
 });
 
-const UserModel = mongoose.model("User", userSchema);
+UserSchema.methods.toJSON = function () {
+  const user = this.toObject();
+  delete user.password;
+  return user;
+};
+
+const UserModel = mongoose.model("User", UserSchema);
 
 export default UserModel;
